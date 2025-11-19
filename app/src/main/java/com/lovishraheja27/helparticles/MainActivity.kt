@@ -5,25 +5,37 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.lovishraheja27.helparticles.ui.detail.ArticleDetailScreen
+import com.lovishraheja27.helparticles.ui.detail.ArticleDetailViewModel
+import com.lovishraheja27.helparticles.ui.list.ArticlesListScreen
+import com.lovishraheja27.helparticles.ui.list.ArticlesListViewModel
 import com.lovishraheja27.helparticles.ui.theme.HelpArticlesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             HelpArticlesTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    HelpArticlesApp()
                 }
             }
         }
@@ -31,17 +43,34 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun HelpArticlesApp() {
+    val navController = rememberNavController()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    HelpArticlesTheme {
-        Greeting("Android")
+    NavHost(
+        navController = navController,
+        startDestination = "articles"
+    ) {
+        composable("articles") {
+            val viewModel = hiltViewModel<ArticlesListViewModel>()
+
+            ArticlesListScreen(
+                viewModel = viewModel,
+                onArticleClick = { articleId ->
+                    navController.navigate("article/$articleId")
+                }
+            )
+        }
+
+        composable(
+            route = "article/{articleId}",
+            arguments = listOf(navArgument("articleId") { type = NavType.StringType })
+        ) {
+            val viewModel = hiltViewModel<ArticleDetailViewModel>()
+
+            ArticleDetailScreen(
+                viewModel = viewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }
