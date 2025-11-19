@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.lovishraheja27.helparticles.HiltTestRunner"
     }
 
     buildTypes {
@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.compose.icons)
     implementation(libs.navigation.compose)
+    implementation(libs.androidx.runner)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -95,6 +96,8 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.core)
     testImplementation(libs.core.testing)
+    testImplementation(kotlin("test"))
+    testImplementation("org.mockito:mockito-inline:5.6.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
